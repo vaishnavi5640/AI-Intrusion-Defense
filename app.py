@@ -6,27 +6,41 @@ import os
 app = Flask(__name__)
 
 
-# ==============================
-# DASHBOARD
-# ==============================
-
 @app.route("/")
 def dashboard():
-    return send_from_directory("dashboard", "index.html")
+    return send_from_directory(
+        os.path.join(app.root_path, "dashboard"),
+        "index.html"
+    )
 
 
-# ==============================
-# DASHBOARD FILES
-# ==============================
+@app.route("/style.css")
+def style_css():
+    response = send_from_directory(
+        os.path.join(app.root_path, "dashboard"),
+        "style.css"
+    )
+    response.headers["Content-Type"] = "text/css"
+    return response
+
+
+@app.route("/script.js")
+def script_js():
+    response = send_from_directory(
+        os.path.join(app.root_path, "dashboard"),
+        "script.js"
+    )
+    response.headers["Content-Type"] = "application/javascript"
+    return response
+
 
 @app.route("/<path:filename>")
 def dashboard_files(filename):
-    return send_from_directory("dashboard", filename)
+    return send_from_directory(
+        os.path.join(app.root_path, "dashboard"),
+        filename
+    )
 
-
-# ==============================
-# HOME API
-# ==============================
 
 @app.route("/api/status")
 def api_status():
@@ -36,10 +50,6 @@ def api_status():
         "message": "Intrusion Detection API is active"
     })
 
-
-# ==============================
-# PREDICTION API
-# ==============================
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -53,10 +63,8 @@ def predict():
                 "error": "No input data provided"
             }), 400
 
-        # ML prediction
         prediction = predict_intrusion(data)
 
-        # Adaptive defense
         defense = take_defensive_action(prediction)
 
         return jsonify({
@@ -72,10 +80,6 @@ def predict():
             "error": str(e)
         }), 500
 
-
-# ==============================
-# READ SECURITY LOG
-# ==============================
 
 def read_security_logs():
 
@@ -129,10 +133,6 @@ def read_security_logs():
     return events
 
 
-# ==============================
-# DASHBOARD DATA
-# ==============================
-
 @app.route("/api/dashboard")
 def dashboard_data():
 
@@ -141,38 +141,31 @@ def dashboard_data():
     total_events = len(events)
 
     threats = sum(
-        1 for event in events
+        1
+        for event in events
         if event["prediction"] != "BENIGN"
     )
 
     blocked = sum(
-        1 for event in events
+        1
+        for event in events
         if event["action"] == "BLOCK"
     )
 
     normal = sum(
-        1 for event in events
+        1
+        for event in events
         if event["prediction"] == "BENIGN"
     )
 
     return jsonify({
-
         "total_events": total_events,
-
         "threats": threats,
-
         "blocked": blocked,
-
         "normal": normal,
-
         "events": events[-10:][::-1]
-
     })
 
-
-# ==============================
-# START SERVER
-# ==============================
 
 if __name__ == "__main__":
 
