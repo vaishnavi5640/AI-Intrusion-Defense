@@ -10,18 +10,25 @@ def take_defensive_action(prediction):
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if prediction == "DDoS":
-        action = "BLOCK"
-        message = "DDoS attack detected. Traffic should be blocked."
-    else:
+    if prediction == "BENIGN":
+
         action = "ALLOW"
         message = "Normal traffic detected. Connection allowed."
 
-    # Create logs folder if it doesn't exist
+    elif prediction == "DDoS":
+
+        action = "BLOCK"
+        message = "DDoS attack detected. Traffic should be blocked."
+
+    else:
+
+        action = "ALERT"
+        message = f"{prediction} attack detected. Security alert generated."
+
     os.makedirs(LOG_DIR, exist_ok=True)
 
-    # Save detection to log
     with open(LOG_FILE, "a") as file:
+
         file.write(
             f"{timestamp} | "
             f"Prediction: {prediction} | "
@@ -39,10 +46,23 @@ def take_defensive_action(prediction):
 
 if __name__ == "__main__":
 
-    result = take_defensive_action("DDoS")
-    print(result)
+    print("Testing Adaptive Defense System")
+    print("=" * 40)
 
-    print()
+    test_predictions = [
+        "BENIGN",
+        "DDoS",
+        "PortScan"
+    ]
 
-    result = take_defensive_action("BENIGN")
-    print(result)
+    for prediction in test_predictions:
+
+        result = take_defensive_action(prediction)
+
+        print(
+            f"{prediction:10} → "
+            f"{result['action']}"
+        )
+
+    print("=" * 40)
+    print("Adaptive Defense Test Completed")
