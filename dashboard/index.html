@@ -1,173 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SentinelAI - Intrusion Defense</title>
+    <title>SentinelAI | Security Operations Center</title>
 
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 
 <body>
 
 <div class="app">
 
-
-    <!-- SIDEBAR -->
+    <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
 
         <div class="brand">
-
             <div class="brand-icon">
                 <i data-lucide="shield-check"></i>
             </div>
 
             <div>
                 <h2>SentinelAI</h2>
-                <span>Intrusion Defense</span>
+                <span>Security Operations</span>
             </div>
-
         </div>
 
+        <div class="system-status">
+            <span class="status-dot"></span>
+
+            <div>
+                <strong id="system-status">SYSTEM ONLINE</strong>
+                <small>All services operational</small>
+            </div>
+        </div>
 
         <nav class="navigation">
 
+            <div class="nav-label">OVERVIEW</div>
+
             <a href="#" class="nav-item active" data-section="dashboard">
-
                 <i data-lucide="layout-dashboard"></i>
-
-                <span>Dashboard</span>
-
+                <span>Command Center</span>
             </a>
-
 
             <a href="#" class="nav-item" data-section="network">
-
                 <i data-lucide="activity"></i>
-
                 <span>Network Monitor</span>
-
             </a>
 
+            <div class="nav-label">SECURITY</div>
 
             <a href="#" class="nav-item" data-section="threats">
-
                 <i data-lucide="shield-alert"></i>
-
                 <span>Threat Detection</span>
-
+                <span class="nav-count threat-count">0</span>
             </a>
 
+            <a href="#" class="nav-item" data-section="approval">
+                <i data-lucide="git-pull-request"></i>
+                <span>Approval Queue</span>
+                <span class="nav-count pending-count">0</span>
+            </a>
 
             <a href="#" class="nav-item" data-section="blocked">
-
                 <i data-lucide="ban"></i>
-
                 <span>Blocked Traffic</span>
-
             </a>
 
+            <div class="nav-label">INVESTIGATION</div>
+
+            <a href="#" class="nav-item" data-section="incidents">
+                <i data-lucide="folder-search"></i>
+                <span>Incidents</span>
+                <span class="nav-count incident-count">0</span>
+            </a>
 
             <a href="#" class="nav-item" data-section="logs">
-
-                <i data-lucide="file-text"></i>
-
+                <i data-lucide="scroll-text"></i>
                 <span>Security Logs</span>
-
             </a>
 
+            <a href="#" class="nav-item" data-section="mitre">
+                <i data-lucide="crosshair"></i>
+                <span>MITRE ATT&CK</span>
+            </a>
+
+            <div class="nav-label">SYSTEM</div>
 
             <a href="#" class="nav-item" data-section="settings">
-
                 <i data-lucide="settings"></i>
-
                 <span>Settings</span>
-
             </a>
 
         </nav>
 
-
         <div class="sidebar-bottom">
-
-            <div class="system-status">
-
-                <span class="status-dot"></span>
-
-                <div>
-
-                    <strong>System Online</strong>
-
-                    <small>Monitoring active</small>
-
+            <div class="model-status">
+                <div class="model-icon">
+                    <i data-lucide="brain-circuit"></i>
                 </div>
 
+                <div>
+                    <strong>AI Engine</strong>
+                    <small>Random Forest • 99.97%</small>
+                </div>
+
+                <span class="status-dot"></span>
             </div>
 
+            <div class="sidebar-version">
+                SentinelAI v1.0 • CSE-AIML
+            </div>
         </div>
 
     </aside>
 
 
-
-    <!-- MAIN -->
+    <!-- ================= MAIN ================= -->
 
     <main class="main">
-
-
-        <!-- TOPBAR -->
 
         <header class="topbar">
 
             <div>
 
+                <div class="breadcrumb">
+                    <span>SENTINELAI</span>
+                    <i data-lucide="chevron-right"></i>
+                    <strong id="breadcrumb-current">Command Center</strong>
+                </div>
+
                 <h1 id="page-title">
-                    Security Dashboard
+                    Security Command Center
                 </h1>
 
                 <p id="page-subtitle">
-                    AI-powered network intrusion monitoring
+                    AI-powered network intrusion detection and adaptive defense
                 </p>
 
             </div>
 
-
             <div class="topbar-right">
 
-                <div class="live-indicator">
-
+                <div class="live-monitoring">
                     <span class="live-dot"></span>
 
-                    LIVE
-
+                    <div>
+                        <strong>LIVE MONITORING</strong>
+                        <span id="last-update">Waiting for telemetry</span>
+                    </div>
                 </div>
 
+                <button class="refresh-btn" id="refresh-button" title="Refresh dashboard">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
 
                 <div class="profile">
-
-                    <div class="profile-avatar">
-                        SA
-                    </div>
+                    <div class="profile-avatar">SA</div>
 
                     <div>
-
                         <strong>Security Admin</strong>
-
                         <small>Administrator</small>
-
                     </div>
-
                 </div>
 
             </div>
@@ -175,259 +175,267 @@
         </header>
 
 
+        <!-- GLOBAL ALERT -->
 
-        <!-- ========================= -->
-        <!-- DASHBOARD SECTION -->
-        <!-- ========================= -->
+        <div class="critical-banner hidden" id="critical-banner">
+
+            <i data-lucide="triangle-alert"></i>
+
+            <div class="critical-banner-content">
+                <strong>Critical security activity detected</strong>
+                <span id="critical-message">
+                    Anomalous network activity requires investigation.
+                </span>
+            </div>
+
+            <button class="investigate-btn" data-section-action="threats">
+                Investigate
+                <i data-lucide="arrow-right"></i>
+            </button>
+
+        </div>
+
+
+        <!-- ==================================================
+             COMMAND CENTER
+        ================================================== -->
 
         <section id="dashboard-section" class="content-section active-section">
 
+            <section class="soc-hero">
 
-            <!-- STAT CARDS -->
+                <div class="hero-copy">
+
+                    <div class="eyebrow">
+                        SECURITY OPERATIONS CENTER
+                    </div>
+
+                    <h2>
+                        Defend your network
+                        <span>with intelligence.</span>
+                    </h2>
+
+                    <p>
+                        SentinelAI continuously analyzes network traffic,
+                        identifies malicious behavior, calculates risk,
+                        and recommends adaptive defensive actions.
+                    </p>
+
+                    <div class="hero-actions">
+
+                        <button class="primary-button" data-section-action="approval">
+                            <i data-lucide="shield-alert"></i>
+                            Review Threats
+                        </button>
+
+                        <button class="secondary-button" data-section-action="network">
+                            <i data-lucide="activity"></i>
+                            Network Monitor
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-security">
+
+                    <div class="security-ring">
+
+                        <div class="security-ring-inner">
+                            <i data-lucide="shield-check"></i>
+
+                            <div>
+                                <strong>PROTECTED</strong>
+                                <span>AI DEFENSE ACTIVE</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="hero-metrics">
+
+                        <div>
+                            <span>MODEL</span>
+                            <strong>Random Forest</strong>
+                        </div>
+
+                        <div>
+                            <span>ACCURACY</span>
+                            <strong>99.97%</strong>
+                        </div>
+
+                        <div>
+                            <span>RESPONSE</span>
+                            <strong>Adaptive</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- KPI -->
 
             <section class="stats-grid">
 
+                <button class="stat-card" data-stat="events">
 
-                <div class="stat-card">
-
-                    <div class="stat-top">
-
-                        <span>Total Events</span>
+                    <div class="stat-card-top">
+                        <span class="stat-label">TOTAL EVENTS</span>
 
                         <div class="stat-icon blue">
                             <i data-lucide="activity"></i>
                         </div>
-
                     </div>
 
-                    <div class="stat-value">
-                        0
+                    <strong class="stat-value" id="stat-events">0</strong>
+
+                    <div class="stat-card-bottom">
+                        All security decisions
                     </div>
 
-                    <div class="stat-footer">
-
-                        <span class="neutral-text">
-                            Security decisions
-                        </span>
-
-                    </div>
-
-                </div>
+                </button>
 
 
+                <button class="stat-card" data-stat="threats">
 
-                <div class="stat-card">
-
-                    <div class="stat-top">
-
-                        <span>Threats Detected</span>
+                    <div class="stat-card-top">
+                        <span class="stat-label">THREATS DETECTED</span>
 
                         <div class="stat-icon red">
                             <i data-lucide="shield-alert"></i>
                         </div>
-
                     </div>
 
-                    <div class="stat-value">
-                        0
+                    <strong class="stat-value danger" id="stat-threats">0</strong>
+
+                    <div class="stat-card-bottom danger-text">
+                        AI identified intrusions
                     </div>
 
-                    <div class="stat-footer">
-
-                        <span class="danger-text">
-                            Intrusions identified
-                        </span>
-
-                    </div>
-
-                </div>
+                </button>
 
 
+                <button class="stat-card" data-stat="blocked">
 
-                <div class="stat-card">
-
-                    <div class="stat-top">
-
-                        <span>Threats Blocked</span>
+                    <div class="stat-card-top">
+                        <span class="stat-label">THREATS BLOCKED</span>
 
                         <div class="stat-icon yellow">
                             <i data-lucide="ban"></i>
                         </div>
-
                     </div>
 
-                    <div class="stat-value">
-                        0
+                    <strong class="stat-value warning" id="stat-blocked">0</strong>
+
+                    <div class="stat-card-bottom">
+                        Adaptive defense actions
                     </div>
 
-                    <div class="stat-footer">
-
-                        <span class="safe-text">
-                            Adaptive defense
-                        </span>
-
-                    </div>
-
-                </div>
+                </button>
 
 
+                <button class="stat-card" data-stat="accuracy">
 
-                <div class="stat-card">
-
-                    <div class="stat-top">
-
-                        <span>Model Accuracy</span>
+                    <div class="stat-card-top">
+                        <span class="stat-label">MODEL ACCURACY</span>
 
                         <div class="stat-icon green">
                             <i data-lucide="target"></i>
                         </div>
-
                     </div>
 
-                    <div class="stat-value">
-                        99.97%
+                    <strong class="stat-value success">99.97%</strong>
+
+                    <div class="stat-card-bottom">
+                        5-fold cross-validation
                     </div>
 
-                    <div class="stat-footer">
-
-                        <span class="safe-text">
-                            5-fold CV
-                        </span>
-
-                    </div>
-
-                </div>
+                </button>
 
             </section>
 
 
+            <!-- ANALYTICS -->
 
-            <!-- DASHBOARD GRID -->
+            <section class="analytics-grid">
 
-            <section class="dashboard-grid">
+                <div class="panel">
 
-
-                <div class="card network-card">
-
-                    <div class="card-header">
+                    <div class="panel-header">
 
                         <div>
+                            <div class="panel-title-row">
+                                <h3>Network Threat Activity</h3>
+                                <span class="live-chip">LIVE</span>
+                            </div>
 
-                            <h2>Network Activity</h2>
-
-                            <p>
-                                Recent security events
-                            </p>
-
+                            <p>Normal traffic versus detected threats</p>
                         </div>
 
-
-                        <div class="chart-status">
-
-                            <span class="status-dot"></span>
-
-                            Live monitoring
-
-                        </div>
+                        <button class="panel-action" data-section-action="network">
+                            View details
+                        </button>
 
                     </div>
 
-
-                    <div class="chart-placeholder">
-
+                    <div class="chart-area large">
                         <canvas id="trafficChart"></canvas>
-
                     </div>
 
                 </div>
 
 
+                <div class="panel">
 
-                <div class="card status-card">
-
-                    <div class="card-header">
+                    <div class="panel-header">
 
                         <div>
-
-                            <h2>Security Status</h2>
-
-                            <p>
-                                Current system condition
-                            </p>
-
+                            <h3>Security Posture</h3>
+                            <p>Current defense state</p>
                         </div>
 
-                        <i data-lucide="shield-check"
-                           class="header-icon"></i>
+                        <i data-lucide="shield-check" class="panel-header-icon"></i>
 
                     </div>
 
+                    <div class="posture-score">
 
-                    <div class="security-main">
-
-                        <div class="security-icon">
-
-                            <i data-lucide="shield-check"></i>
-
+                        <div class="score-circle">
+                            <strong id="posture-score">98</strong>
+                            <span>/100</span>
                         </div>
 
-
                         <div>
-
-                            <h3>Protected</h3>
-
-                            <p>
-                                AI intrusion detection is active
-                            </p>
-
+                            <strong>Excellent</strong>
+                            <p>Network currently protected</p>
                         </div>
 
                     </div>
 
+                    <div class="posture-list">
 
-                    <div class="security-list">
-
-                        <div class="security-row">
-
+                        <div>
                             <span>Detection Engine</span>
-
-                            <strong class="online">
-                                Online
-                            </strong>
-
+                            <strong class="success">✓ Online</strong>
                         </div>
 
-
-                        <div class="security-row">
-
-                            <span>Defense System</span>
-
-                            <strong class="online">
-                                Active
-                            </strong>
-
+                        <div>
+                            <span>ML Model</span>
+                            <strong class="success">✓ Loaded</strong>
                         </div>
 
-
-                        <div class="security-row">
-
-                            <span>API Status</span>
-
-                            <strong class="online">
-                                Running
-                            </strong>
-
+                        <div>
+                            <span>Adaptive Defense</span>
+                            <strong class="success">✓ Active</strong>
                         </div>
 
-
-                        <div class="security-row">
-
-                            <span>Model</span>
-
-                            <strong>
-                                Random Forest
-                            </strong>
-
+                        <div>
+                            <span>API</span>
+                            <strong class="success">✓ Running</strong>
                         </div>
 
                     </div>
@@ -437,124 +445,155 @@
             </section>
 
 
+            <!-- COMMAND GRID -->
 
-            <!-- RECENT EVENTS -->
+            <section class="command-grid">
 
-            <section class="card events-card">
+                <div class="panel">
 
-                <div class="card-header">
+                    <div class="panel-header">
+
+                        <div>
+                            <div class="panel-title-row">
+                                <h3>Analyst Approval Queue</h3>
+                                <span class="count-chip" id="dashboard-pending-count">
+                                    0 pending
+                                </span>
+                            </div>
+
+                            <p>Threats requiring human authorization</p>
+                        </div>
+
+                        <button class="panel-action" data-section-action="approval">
+                            Open queue
+                        </button>
+
+                    </div>
+
+                    <div class="approval-preview" id="approval-preview">
+
+                        <div class="empty-state compact">
+                            <div class="empty-icon">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+
+                            <strong>No requests awaiting approval</strong>
+                            <span>New suspicious activity will appear here.</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <h3>Threat Distribution</h3>
+                            <p>Detected attack categories</p>
+                        </div>
+
+                    </div>
+
+                    <div class="chart-area medium">
+                        <canvas id="threatDistributionChart"></canvas>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- EVENTS -->
+
+            <section class="panel events-panel">
+
+                <div class="panel-header">
 
                     <div>
+                        <div class="panel-title-row">
+                            <h3>Recent Security Events</h3>
+                            <span class="live-chip">REAL-TIME</span>
+                        </div>
 
-                        <h2>Recent Security Events</h2>
-
-                        <p>
-                            Latest activity detected by SentinelAI
-                        </p>
-
+                        <p>Latest events processed by SentinelAI</p>
                     </div>
 
-
-                    <div class="event-count">
-                        Live
-                    </div>
+                    <button class="panel-action" data-section-action="logs">
+                        View all logs
+                    </button>
 
                 </div>
-
 
                 <div class="events-table">
 
                     <div class="table-head">
-
                         <span>TIME</span>
-                        <span>THREAT</span>
-                        <span>DETECTION</span>
+                        <span>EVENT</span>
+                        <span>SEVERITY</span>
                         <span>ACTION</span>
-
                     </div>
+
+                    <div id="recent-events-container"></div>
 
                 </div>
 
             </section>
 
-
         </section>
 
 
+        <!-- ================= NETWORK ================= -->
 
-        <!-- ========================= -->
-        <!-- NETWORK MONITOR -->
-        <!-- ========================= -->
+        <section id="network-section" class="content-section">
 
-        <section id="network-section"
-                 class="content-section">
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">NETWORK VISIBILITY</div>
+                    <h2>Network Monitor</h2>
+                    <p>Real-time visibility into network activity and security events.</p>
+                </div>
+
+                <div class="page-status success">● MONITORING ACTIVE</div>
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <span>TRAFFIC EVENTS</span>
+                    <strong id="network-events">0</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>NORMAL TRAFFIC</span>
+                    <strong id="network-normal">0</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>THREATS</span>
+                    <strong id="network-threats" class="danger">0</strong>
+                </div>
+
+                <div class="info-box">
+                    <span>BLOCKED</span>
+                    <strong id="network-blocked" class="warning">0</strong>
+                </div>
+
+            </div>
 
             <div class="page-card">
 
                 <div class="page-card-header">
-
                     <div>
-
-                        <h2>Network Monitor</h2>
-
-                        <p>
-                            Real-time network security activity
-                        </p>
-
+                        <h2>Network Activity Timeline</h2>
+                        <p>Security events processed over time</p>
                     </div>
-
-                    <div class="monitor-status">
-
-                        <span class="status-dot"></span>
-
-                        Monitoring
-
-                    </div>
-
                 </div>
-
 
                 <div class="large-chart">
-
                     <canvas id="networkChart"></canvas>
-
-                </div>
-
-
-                <div class="info-grid">
-
-                    <div class="info-box">
-
-                        <span>Events</span>
-
-                        <strong id="network-events">
-                            0
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info-box">
-
-                        <span>Threats</span>
-
-                        <strong id="network-threats">
-                            0
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info-box">
-
-                        <span>Blocked</span>
-
-                        <strong id="network-blocked">
-                            0
-                        </strong>
-
-                    </div>
-
                 </div>
 
             </div>
@@ -562,274 +601,194 @@
         </section>
 
 
+        <!-- ================= THREATS ================= -->
 
-        <!-- ========================= -->
-        <!-- THREAT DETECTION -->
-        <!-- ========================= -->
+        <section id="threats-section" class="content-section">
 
-        <section id="threats-section"
-                 class="content-section">
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">THREAT INTELLIGENCE</div>
+                    <h2>Threat Detection</h2>
+                    <p>AI-identified threats requiring investigation.</p>
+                </div>
+            </div>
+
+            <div class="page-card">
+                <div id="threat-list" class="detail-list"></div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= APPROVAL ================= -->
+
+        <section id="approval-section" class="content-section">
+
+            <div class="page-intro">
+
+                <div>
+                    <div class="eyebrow">HUMAN-IN-THE-LOOP DEFENSE</div>
+                    <h2>Approval Queue</h2>
+                    <p>Review security decisions before adaptive actions are authorized.</p>
+                </div>
+
+                <div class="approval-status-badge">
+                    <span class="warning-dot"></span>
+                    <span id="approval-status-text">0 PENDING REVIEW</span>
+                </div>
+
+            </div>
+
+            <div id="approval-list" class="approval-list"></div>
+
+        </section>
+
+
+        <!-- ================= BLOCKED ================= -->
+
+        <section id="blocked-section" class="content-section">
+
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">ADAPTIVE DEFENSE</div>
+                    <h2>Blocked Traffic</h2>
+                    <p>Threats automatically blocked by SentinelAI.</p>
+                </div>
+            </div>
+
+            <div class="page-card">
+                <div id="blocked-list" class="detail-list"></div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= INCIDENTS ================= -->
+
+        <section id="incidents-section" class="content-section">
+
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">INVESTIGATION</div>
+                    <h2>Security Incidents</h2>
+                    <p>Correlated threats requiring investigation.</p>
+                </div>
+            </div>
+
+            <div id="incident-grid" class="detail-list"></div>
+
+        </section>
+
+
+        <!-- ================= LOGS ================= -->
+
+        <section id="logs-section" class="content-section">
+
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">AUDIT TRAIL</div>
+                    <h2>Security Logs</h2>
+                    <p>Recorded activity from the SentinelAI defense engine.</p>
+                </div>
+            </div>
 
             <div class="page-card">
 
-                <div class="page-card-header">
-
-                    <div>
-
-                        <h2>Threat Detection</h2>
-
-                        <p>
-                            AI-detected network threats
-                        </p>
-
-                    </div>
-
-                    <div class="danger-status">
-                        Detection Engine Active
-                    </div>
-
-                </div>
-
-
-                <div id="threat-list"
-                     class="detail-list">
-
-                    <div class="empty-state">
-
-                        <i data-lucide="shield-check"></i>
-
-                        <h3>No threats displayed</h3>
-
-                        <p>
-                            Detected threats will appear here.
-                        </p>
-
-                    </div>
-
-                </div>
+                <div class="log-terminal" id="log-terminal"></div>
 
             </div>
 
         </section>
 
 
+        <!-- ================= MITRE ================= -->
 
-        <!-- ========================= -->
-        <!-- BLOCKED TRAFFIC -->
-        <!-- ========================= -->
+        <section id="mitre-section" class="content-section">
 
-        <section id="blocked-section"
-                 class="content-section">
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">THREAT FRAMEWORK</div>
+                    <h2>MITRE ATT&CK</h2>
+                    <p>Threat behavior mapped to ATT&CK techniques.</p>
+                </div>
+            </div>
 
             <div class="page-card">
 
-                <div class="page-card-header">
+                <table class="mitre-table">
+                    <thead>
+                        <tr>
+                            <th>Threat</th>
+                            <th>Technique</th>
+                            <th>Name</th>
+                            <th>Tactic</th>
+                        </tr>
+                    </thead>
 
-                    <div>
-
-                        <h2>Blocked Traffic</h2>
-
-                        <p>
-                            Automatically blocked malicious activity
-                        </p>
-
-                    </div>
-
-                    <div class="blocked-status">
-                        Adaptive Defense Active
-                    </div>
-
-                </div>
-
-
-                <div id="blocked-list"
-                     class="detail-list">
-
-                    <div class="empty-state">
-
-                        <i data-lucide="ban"></i>
-
-                        <h3>No blocked traffic</h3>
-
-                        <p>
-                            Blocked events will appear here.
-                        </p>
-
-                    </div>
-
-                </div>
+                    <tbody id="mitre-table">
+                    </tbody>
+                </table>
 
             </div>
 
         </section>
 
 
+        <!-- ================= SETTINGS ================= -->
 
-        <!-- ========================= -->
-        <!-- SECURITY LOGS -->
-        <!-- ========================= -->
+        <section id="settings-section" class="content-section">
 
-        <section id="logs-section"
-                 class="content-section">
-
-            <div class="page-card">
-
-                <div class="page-card-header">
-
-                    <div>
-
-                        <h2>Security Logs</h2>
-
-                        <p>
-                            Complete security event history
-                        </p>
-
-                    </div>
-
-                    <div class="log-status">
-                        Logging Active
-                    </div>
-
+            <div class="page-intro">
+                <div>
+                    <div class="eyebrow">SYSTEM</div>
+                    <h2>Settings</h2>
+                    <p>SentinelAI system configuration.</p>
                 </div>
-
-
-                <div class="log-terminal"
-                     id="security-log-view">
-
-                    Waiting for security events...
-
-                </div>
-
             </div>
 
-        </section>
-
-
-
-        <!-- ========================= -->
-        <!-- SETTINGS -->
-        <!-- ========================= -->
-
-        <section id="settings-section"
-                 class="content-section">
-
             <div class="page-card">
-
-                <div class="page-card-header">
-
-                    <div>
-
-                        <h2>System Settings</h2>
-
-                        <p>
-                            SentinelAI configuration
-                        </p>
-
-                    </div>
-
-                    <i data-lucide="settings"
-                       class="header-icon"></i>
-
-                </div>
-
 
                 <div class="settings-list">
 
-
                     <div class="setting-row">
-
                         <div>
-
                             <strong>Detection Engine</strong>
-
-                            <span>
-                                Machine learning intrusion detection
-                            </span>
-
+                            <span>Machine Learning Intrusion Detection</span>
                         </div>
-
-                        <span class="setting-value online">
-                            ACTIVE
-                        </span>
-
+                        <strong class="setting-value online">ACTIVE</strong>
                     </div>
 
-
                     <div class="setting-row">
-
                         <div>
-
                             <strong>Machine Learning Model</strong>
-
-                            <span>
-                                Random Forest
-                            </span>
-
+                            <span>Random Forest</span>
                         </div>
-
-                        <span class="setting-value">
-                            LOADED
-                        </span>
-
+                        <strong class="setting-value online">LOADED</strong>
                     </div>
 
-
                     <div class="setting-row">
-
                         <div>
-
                             <strong>Model Accuracy</strong>
-
-                            <span>
-                                Five-fold cross-validation
-                            </span>
-
+                            <span>Five-fold Cross-Validation</span>
                         </div>
-
-                        <span class="setting-value">
-                            99.97%
-                        </span>
-
+                        <strong class="setting-value">99.97%</strong>
                     </div>
 
-
                     <div class="setting-row">
-
                         <div>
-
                             <strong>Defense Response</strong>
-
-                            <span>
-                                Automatic DDoS blocking
-                            </span>
-
+                            <span>Automatic DDoS blocking</span>
                         </div>
-
-                        <span class="setting-value online">
-                            ENABLED
-                        </span>
-
+                        <strong class="setting-value online">ENABLED</strong>
                     </div>
-
 
                     <div class="setting-row">
-
                         <div>
-
                             <strong>API Port</strong>
-
-                            <span>
-                                Flask application endpoint
-                            </span>
-
+                            <span>Flask Application Endpoint</span>
                         </div>
-
-                        <span class="setting-value">
-                            5000
-                        </span>
-
+                        <strong class="setting-value">5000</strong>
                     </div>
-
 
                 </div>
 
@@ -838,30 +797,17 @@
         </section>
 
 
-
-        <!-- FOOTER -->
-
         <footer>
-
-            <span>
-                SentinelAI • AI-Based Intrusion Detection & Adaptive Network Defense
-            </span>
-
-            <span>
-                CSE-AIML Project
-            </span>
-
+            <span>SentinelAI • AI-Based Intrusion Detection & Adaptive Defense</span>
+            <span>Random Forest • CICIDS2017</span>
         </footer>
-
 
     </main>
 
 </div>
 
 
-
 <script src="script.js"></script>
 
 </body>
-
 </html>
