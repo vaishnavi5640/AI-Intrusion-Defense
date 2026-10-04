@@ -1,10 +1,50 @@
 from flask import Flask, request, jsonify, send_from_directory
 from src.predict import predict_intrusion
 from src.defense import take_defensive_action
+
+from prometheus_client import Counter, Gauge, generate_latest, CONTENT_TYPE_LATEST
+
 import os
+
 
 app = Flask(__name__)
 
+
+# ============================================================
+# PROMETHEUS METRICS
+# ============================================================
+
+TOTAL_PREDICTIONS = Counter(
+    "intrusion_detection_predictions_total",
+    "Total number of intrusion detection predictions"
+)
+
+THREATS_DETECTED = Counter(
+    "intrusion_detection_threats_total",
+    "Total number of threats detected"
+)
+
+TRAFFIC_BLOCKED = Counter(
+    "intrusion_detection_blocked_total",
+    "Total number of blocked attacks"
+)
+
+NORMAL_TRAFFIC = Counter(
+    "intrusion_detection_normal_total",
+    "Total number of normal traffic predictions"
+)
+
+ACTIVE_STATUS = Gauge(
+    "intrusion_detection_api_status",
+    "Current status of the intrusion detection API"
+)
+
+ACTIVE_STATUS.set(1)
+
+
+# ============================================================
+# DASHBOARD
+# ============================================================
 
 @app.route("/")
 def dashboard():
@@ -42,6 +82,10 @@ def dashboard_files(filename):
     )
 
 
+# ============================================================
+# API STATUS
+# ============================================================
+
 @app.route("/api/status")
 def api_status():
     return jsonify({
@@ -50,6 +94,21 @@ def api_status():
         "message": "Intrusion Detection API is active"
     })
 
+
+# ============================================================
+# PROMETHEUS METRICS ENDPOINT
+# ============================================================
+
+@app.route("/metrics")
+def metrics():
+    return generate_latest(), 200, {
+        "Content-Type": CONTENT_TYPE_LATEST
+    }
+
+
+# ============================================================
+# PREDICTION API
+# ============================================================
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -65,7 +124,23 @@ def predict():
 
         prediction = predict_intrusion(data)
 
+        # Update total prediction metric
+        TOTAL_PREDICTIONS.inc()
+
+        # Perform defensive action
         defense = take_defensive_action(prediction)
+
+        # Update metrics
+        if prediction == "BENIGN":
+
+            NORMAL_TRAFFIC.inc()
+
+        else:
+
+            THREATS_DETECTED.inc()
+
+            if defense["action"] == "BLOCK":
+                TRAFFIC_BLOCKED.inc()
 
         return jsonify({
             "prediction": prediction,
@@ -80,6 +155,10 @@ def predict():
             "error": str(e)
         }), 500
 
+
+# ============================================================
+# SECURITY LOG READER
+# ============================================================
 
 def read_security_logs():
 
@@ -128,10 +207,15 @@ def read_security_logs():
                 })
 
             except Exception:
+
                 continue
 
     return events
 
+
+# ============================================================
+# DASHBOARD DATA API
+# ============================================================
 
 @app.route("/api/dashboard")
 def dashboard_data():
@@ -159,13 +243,23 @@ def dashboard_data():
     )
 
     return jsonify({
+
         "total_events": total_events,
+
         "threats": threats,
+
         "blocked": blocked,
+
         "normal": normal,
+
         "events": events[-10:][::-1]
+
     })
 
+
+# ============================================================
+# APPLICATION START
+# ============================================================
 
 if __name__ == "__main__":
 
